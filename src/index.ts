@@ -1,16 +1,18 @@
 import 'reflect-metadata';
-import { Upload } from './entity/Upload';
-import { Course } from './entity/Course';
-import { Tag } from './entity/Tag';
-import { CourseResolver } from './resolvers/Course';
-import { TagResolver } from './resolvers/Tag';
-import { createConnection } from 'typeorm';
-import { buildSchema } from 'type-graphql';
-import { ApolloServer } from 'apollo-server-express';
+import {Upload} from './entity/Upload';
+import {Course} from './entity/Course';
+import {Tag} from './entity/Tag';
+import {CourseResolver} from './resolvers/Course';
+import {TagResolver} from './resolvers/Tag';
+import {createConnection} from 'typeorm';
+import {buildSchema} from 'type-graphql';
+import {ApolloServer} from 'apollo-server-express';
 import Express from 'express';
 import dotenv from 'dotenv';
 import cors = require('cors');
 import cookieParser = require('cookie-parser');
+import {User} from './entity/User';
+import {passwordAuthChecker} from "./utils/auth-checker";
 
 dotenv.config();
 
@@ -21,12 +23,8 @@ const startServer = async () => {
     port: 3306,
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: 'ELI',
-    entities: [
-      Course,
-      Upload,
-      Tag,
-    ],
+    database: 'eli_agoria',
+    entities: [User, Course, Upload, Tag],
     synchronize: true,
     migrations: ['migration/*.ts'],
     cli: {
@@ -35,10 +33,8 @@ const startServer = async () => {
   });
 
   const schema = await buildSchema({
-    resolvers: [
-      CourseResolver,
-      TagResolver,
-    ],
+    resolvers: [CourseResolver, TagResolver],
+    authChecker: passwordAuthChecker,
     nullableByDefault: true,
   });
 
@@ -47,13 +43,13 @@ const startServer = async () => {
   app.use(cookieParser());
   const server = new ApolloServer({
     schema,
-    context: ({ req, res }) => ({ req, res }),
+    context: ({req, res}) => ({req, res}),
   });
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({app});
 
-  app.listen(4300, () => {
-    console.log('server started');
+  app.listen(4100, () => {
+    console.log('server started on port 4100');
   });
 };
 startServer().catch((e) => {

@@ -14,10 +14,8 @@ export class TagResolver {
   }
 
   @Mutation(() => Tag)
-  public async createTag(
-    @Arg('values') values: Tag,
-  ): Promise<Tag> {
-    const { name } = values
+  public async createTag(@Arg('values') values: Tag): Promise<Tag> {
+    const { name } = values;
     const newTag = this.tagRepo.create({
       name,
     });
@@ -27,7 +25,6 @@ export class TagResolver {
 
   @Query(() => Tag)
   public async getTagByName(@Arg('name') name: string): Promise<Tag | void> {
-
     return await this.tagRepo.findOne({ where: { name } });
   }
 }

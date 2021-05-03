@@ -13,7 +13,6 @@ import {
 import { Length } from 'class-validator';
 import { User } from './User';
 import { Upload } from './Upload';
-import { Evaluation } from './Evaluation';
 import { Tag } from './Tag';
 
 @ObjectType('Course')
@@ -42,12 +41,6 @@ export class Course extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   content?: string | null;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt!: Date;
-
   @ManyToOne(() => User, (user) => user.courses, { nullable: false })
   user!: number;
 
@@ -55,11 +48,13 @@ export class Course extends BaseEntity {
   @JoinTable({ name: 'course_has_uploads' })
   uploads!: Upload[];
 
-  @ManyToMany(() => Evaluation)
-  @JoinTable({ name: 'courses_has_evaluations' })
-  evaluations!: Evaluation[];
-
   @ManyToMany(() => Tag)
   @JoinTable({ name: 'courses_has_specialities' })
   specialities!: Tag[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt!: Date;
 }
